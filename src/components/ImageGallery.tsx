@@ -44,11 +44,11 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
   return (
     <div className="w-full">
       {/* Image Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         {images.map((image) => (
           <motion.div
             key={image.id}
-            className="relative group aspect-square"
+            className="relative group aspect-[1/2]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -56,7 +56,7 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
             <img
               src={image.url}
               alt="Gallery"
-              className="w-full h-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+              className="w-full h-full object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity shadow-md border-2 border-pink-200"
               onClick={() => handleImageClick(image)}
             />
             {isAdmin && (
@@ -70,14 +70,14 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
           </motion.div>
         ))}
         {isAdmin && (
-          <label className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
+          <label className="aspect-[1/2] border-2 border-dashed border-pink-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors bg-pink-50/50">
             <input
               type="file"
               accept="image/*"
               className="hidden"
               onChange={handleImageUpload}
             />
-            <Plus className="w-8 h-8 text-gray-400" />
+            <Plus className="w-8 h-8 text-pink-400" />
           </label>
         )}
       </div>
@@ -89,20 +89,20 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-40 mt-[50px]"
             onClick={() => setSelectedImage(null)}
           >
             <motion.div
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.9 }}
-              className="relative max-w-4xl max-h-[80vh] mx-4"
+              className="relative max-w-4xl max-h-[calc(100vh-70px)] mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={selectedImage.url}
                 alt="Selected"
-                className="w-full h-full object-contain rounded-lg"
+                className="w-full h-full object-contain rounded-xl"
               />
               <button
                 onClick={() => setSelectedImage(null)}
