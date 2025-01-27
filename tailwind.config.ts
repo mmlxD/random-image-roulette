@@ -20,6 +20,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
+        dancing: ["Dancing Script", "cursive"],
       },
       colors: {
         border: "hsl(var(--border))",
