@@ -47,7 +47,7 @@ export const AdminPanel = ({ categories, onAddCategory, onRemoveCategory, onClos
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white/10 backdrop-blur-md rounded-xl p-8 w-full max-w-3xl border border-pink-500/20"
+        className="bg-white/10 backdrop-blur-md rounded-xl p-8 w-full max-w-5xl border border-pink-500/20"
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
@@ -82,28 +82,29 @@ export const AdminPanel = ({ categories, onAddCategory, onRemoveCategory, onClos
             </button>
           </form>
         ) : (
-          <div className="space-y-6">
-            <form onSubmit={handleSubmit} className="mb-6">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="New category name"
-                  className="flex-1 px-4 py-2 rounded-lg bg-white/5 border border-pink-500/20 text-white placeholder:text-pink-300/50 focus:outline-none focus:border-pink-500"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
-                >
-                  <Plus className="w-5 h-5" />
-                </button>
-              </div>
-            </form>
+          <div className="space-y-8">
+            <div className="bg-white/5 rounded-xl p-6 border border-pink-500/20">
+              <h3 className="text-lg font-semibold text-white mb-4">Category Management</h3>
+              <form onSubmit={handleSubmit} className="mb-6">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="New category name"
+                    className="flex-1 px-4 py-2 rounded-lg bg-white/5 border border-pink-500/20 text-white placeholder:text-pink-300/50 focus:outline-none focus:border-pink-500"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Category
+                  </button>
+                </div>
+              </form>
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white mb-3">Current Categories</h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {categories.map((category) => (
                   <div
                     key={category}
@@ -123,9 +124,9 @@ export const AdminPanel = ({ categories, onAddCategory, onRemoveCategory, onClos
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="bg-white/5 rounded-xl p-6 border border-pink-500/20">
               <h3 className="text-lg font-semibold text-white mb-4">Image Management</h3>
-              <ImageGallery onImageClick={() => {}} />
+              <ImageGallery onImageClick={() => {}} adminMode={true} />
             </div>
           </div>
         )}
