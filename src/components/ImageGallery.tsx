@@ -10,12 +10,12 @@ interface Image {
 
 interface ImageGalleryProps {
   onImageClick: () => void;
+  adminMode?: boolean;
 }
 
-export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
+export const ImageGallery = ({ onImageClick, adminMode = false }: ImageGalleryProps) => {
   const [images, setImages] = useState<Image[]>([]);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
-  const [isAdmin] = useState(true); // TODO: Replace with actual auth
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -59,7 +59,7 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
               className="w-full h-full object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity shadow-md border-2 border-pink-200"
               onClick={() => handleImageClick(image)}
             />
-            {isAdmin && (
+            {adminMode && (
               <button
                 onClick={() => handleDeleteImage(image.id)}
                 className="absolute top-2 right-2 p-2 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
@@ -69,7 +69,7 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
             )}
           </motion.div>
         ))}
-        {isAdmin && (
+        {adminMode && (
           <label className="aspect-[1/2] border-2 border-dashed border-pink-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors bg-pink-50/50">
             <input
               type="file"
@@ -89,7 +89,7 @@ export const ImageGallery = ({ onImageClick }: ImageGalleryProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-40 mt-[50px]"
+            className="fixed inset-0 bg-black/80 flex items-center justify-center z-40"
             onClick={() => setSelectedImage(null)}
           >
             <motion.div

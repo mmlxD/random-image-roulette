@@ -40,51 +40,6 @@ const Index = () => {
     });
   };
 
-  const handleImageClick = () => {
-    const generateNumber = () => Math.floor(Math.random() * 100) + 1;
-    
-    // Animate numbers changing rapidly
-    let iterations = 0;
-    const maxIterations = 20;
-    const interval = setInterval(() => {
-      setCurrentValues({
-        w: generateNumber(),
-        x: generateNumber(),
-        y: generateNumber(),
-        z: generateNumber(),
-      });
-      
-      iterations++;
-      if (iterations >= maxIterations) {
-        clearInterval(interval);
-        const finalValues = {
-          w: generateNumber(),
-          x: generateNumber(),
-          y: generateNumber(),
-          z: generateNumber(),
-        };
-        setCurrentValues(finalValues);
-      }
-    }, 50);
-  };
-
-  const handleAddCategory = (newCategory: string) => {
-    if (!categories.includes(newCategory)) {
-      setCategories(prev => [...prev, newCategory]);
-      toast.success(`Added category: ${newCategory}`);
-    }
-  };
-
-  const handleRemoveCategory = (categoryToRemove: string) => {
-    if (categoryToRemove !== "All") {
-      setCategories(prev => prev.filter(cat => cat !== categoryToRemove));
-      if (selectedCategory === categoryToRemove) {
-        setSelectedCategory("All");
-      }
-      toast.success(`Removed category: ${categoryToRemove}`);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-pink-900">
       {/* Top Bar with Numbers */}
@@ -95,9 +50,14 @@ const Index = () => {
           </h1>
           <button 
             onClick={handleHeartClick}
-            className="text-pink-400 hover:text-pink-300 transition-colors"
+            className="text-transparent hover:scale-110 transition-transform"
+            style={{
+              background: "linear-gradient(45deg, #FF0018, #FFA52C, #FFFF41, #008018, #0000F9, #86007D)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text"
+            }}
           >
-            <Heart className="w-5 h-5" />
+            <Heart className="w-5 h-5 fill-current" />
           </button>
         </div>
         <div className="flex items-center space-x-8">
@@ -108,8 +68,8 @@ const Index = () => {
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 0.3 }}
             >
-              <span className="text-lg md:text-xl font-medium text-pink-300">{key.toUpperCase()}:</span>
-              <span className="text-xl md:text-2xl font-bold text-white">{value}</span>
+              <span className="text-2xl md:text-3xl font-medium text-pink-300">{key.toUpperCase()}:</span>
+              <span className="text-3xl md:text-4xl font-bold text-white">{value}</span>
             </motion.div>
           ))}
         </div>
@@ -145,7 +105,7 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-7xl mx-auto"
         >
-          <ImageGallery onImageClick={handleImageClick} />
+          <ImageGallery onImageClick={() => {}} adminMode={false} />
         </motion.div>
       </div>
 
@@ -154,8 +114,21 @@ const Index = () => {
         {showAdmin && (
           <AdminPanel 
             categories={categories}
-            onAddCategory={handleAddCategory}
-            onRemoveCategory={handleRemoveCategory}
+            onAddCategory={(newCategory) => {
+              if (!categories.includes(newCategory)) {
+                setCategories(prev => [...prev, newCategory]);
+                toast.success(`Added category: ${newCategory}`);
+              }
+            }}
+            onRemoveCategory={(categoryToRemove) => {
+              if (categoryToRemove !== "All") {
+                setCategories(prev => prev.filter(cat => cat !== categoryToRemove));
+                if (selectedCategory === categoryToRemove) {
+                  setSelectedCategory("All");
+                }
+                toast.success(`Removed category: ${categoryToRemove}`);
+              }
+            }}
             onClose={() => setShowAdmin(false)}
           />
         )}
