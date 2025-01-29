@@ -19,7 +19,7 @@ interface ImageGalleryProps {
 
 // Initialize Supabase client with your project's URL and anon key
 const supabase = createClient(
-  'db.wpaqlxtzoymvsbtdshep.supabase.co',
+  'postgresql://postgres:gB*Cw8vtk-dC-v3@db.wpaqlxtzoymvsbtdshep.supabase.co:5432/postgres',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsaHZ4bXhpZ3F4aHpuYnZxaGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY1MzI5ODAsImV4cCI6MjAyMjEwODk4MH0.BEBeQfqQVKkDGHJ5YcXGGbQn54_D5GHNbOZBwkE4fvM'
 );
 
