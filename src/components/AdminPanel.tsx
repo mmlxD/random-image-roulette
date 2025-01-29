@@ -135,7 +135,11 @@ export const AdminPanel = ({ categories, onAddCategory, onRemoveCategory, onClos
 
             <div className="bg-white/5 rounded-xl p-6 border border-pink-500/20">
               <h3 className="text-lg font-semibold text-white mb-4">Image Management</h3>
-              <ImageGallery onImageClick={() => {}} adminMode={true} />
+              <ImageGallery 
+                onImageClick={() => {}} 
+                adminMode={true}
+                categories={categories} 
+              />
             </div>
           </div>
         )}

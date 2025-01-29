@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { createClient } from '@supabase/supabase-js';
 
 interface Image {
   id: string;
@@ -13,36 +14,104 @@ interface ImageGalleryProps {
   onImageClick: () => void;
   adminMode?: boolean;
   selectedCategory?: string;
+  categories?: string[];
 }
 
-export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory = "All" }: ImageGalleryProps) => {
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+export const ImageGallery = ({ 
+  onImageClick, 
+  adminMode = false, 
+  selectedCategory = "All",
+  categories = []
+}: ImageGalleryProps) => {
   const [images, setImages] = useState<Image[]>([]);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
   const [uploadCategory, setUploadCategory] = useState(selectedCategory);
 
-  // Load images from localStorage on component mount
+  // Load images from Supabase on component mount
   useEffect(() => {
-    const savedImages = localStorage.getItem('gallery-images');
-    if (savedImages) {
-      setImages(JSON.parse(savedImages));
-    }
-  }, []);
+    const fetchImages = async () => {
+      const { data, error } = await supabase
+        .from('images')
+        .select(`
+          id,
+          url,
+          categories(name)
+        `);
+      
+      if (error) {
+        toast.error("Failed to load images");
+        return;
+      }
 
-  // Save images to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('gallery-images', JSON.stringify(images));
-  }, [images]);
+      if (data) {
+        const formattedImages = data.map(img => ({
+          id: img.id,
+          url: img.url,
+          category: img.categories?.name || "All"
+        }));
+        setImages(formattedImages);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
+    if (file && uploadCategory) {
+      // First, upload file to Supabase storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        toast.error("Failed to upload image");
+        return;
+      }
+
+      // Get the public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName);
+
+      // Get category ID
+      const { data: categoryData } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('name', uploadCategory)
+        .single();
+
+      // Save image record
+      const { data: imageData, error: imageError } = await supabase
+        .from('images')
+        .insert([
+          {
+            url: publicUrl,
+            category_id: categoryData?.id
+          }
+        ])
+        .select()
+        .single();
+
+      if (imageError) {
+        toast.error("Failed to save image data");
+        return;
+      }
+
       const newImage: Image = {
-        id: Date.now().toString(),
-        url: imageUrl,
+        id: imageData.id,
+        url: publicUrl,
         category: uploadCategory,
       };
-      setImages((prev) => [...prev, newImage]);
+
+      setImages(prev => [...prev, newImage]);
       toast.success(`Image added to ${uploadCategory} category!`);
     }
   };
@@ -52,8 +121,18 @@ export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory
     onImageClick();
   };
 
-  const handleDeleteImage = (id: string) => {
-    setImages((prev) => prev.filter((img) => img.id !== id));
+  const handleDeleteImage = async (id: string) => {
+    const { error } = await supabase
+      .from('images')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Failed to delete image");
+      return;
+    }
+
+    setImages(prev => prev.filter(img => img.id !== id));
     toast.success("Image deleted successfully!");
   };
 
@@ -71,11 +150,11 @@ export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory
             onChange={(e) => setUploadCategory(e.target.value)}
             className="w-full px-4 py-2 rounded-lg bg-white/5 border border-pink-500/20 text-white focus:outline-none focus:border-pink-500 mb-4"
           >
-            {selectedCategory !== "All" ? (
-              <option value={selectedCategory}>{selectedCategory}</option>
-            ) : (
-              <option value="">Select a category</option>
-            )}
+            {categories.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
           </select>
         </div>
       )}
