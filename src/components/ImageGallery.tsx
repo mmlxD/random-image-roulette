@@ -17,9 +17,10 @@ interface ImageGalleryProps {
   categories?: string[];
 }
 
+// Initialize Supabase client with public URL and anon key
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  'https://xyzcompany.supabase.co',  // Replace with your Supabase URL
+  'public-anon-key'  // Replace with your public anon key
 );
 
 export const ImageGallery = ({ 
@@ -37,11 +38,7 @@ export const ImageGallery = ({
     const fetchImages = async () => {
       const { data, error } = await supabase
         .from('images')
-        .select(`
-          id,
-          url,
-          categories(name)
-        `);
+        .select('*');
       
       if (error) {
         toast.error("Failed to load images");
@@ -49,12 +46,7 @@ export const ImageGallery = ({
       }
 
       if (data) {
-        const formattedImages = data.map(img => ({
-          id: img.id,
-          url: img.url,
-          category: img.categories?.name || "All"
-        }));
-        setImages(formattedImages);
+        setImages(data);
       }
     };
 
@@ -67,6 +59,7 @@ export const ImageGallery = ({
       // First, upload file to Supabase storage
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
+      
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('images')
         .upload(fileName, file);
@@ -81,20 +74,13 @@ export const ImageGallery = ({
         .from('images')
         .getPublicUrl(fileName);
 
-      // Get category ID
-      const { data: categoryData } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('name', uploadCategory)
-        .single();
-
       // Save image record
       const { data: imageData, error: imageError } = await supabase
         .from('images')
         .insert([
           {
             url: publicUrl,
-            category_id: categoryData?.id
+            category: uploadCategory
           }
         ])
         .select()
