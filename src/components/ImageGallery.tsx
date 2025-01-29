@@ -6,14 +6,16 @@ import { toast } from "sonner";
 interface Image {
   id: string;
   url: string;
+  category: string;
 }
 
 interface ImageGalleryProps {
   onImageClick: () => void;
   adminMode?: boolean;
+  selectedCategory?: string;
 }
 
-export const ImageGallery = ({ onImageClick, adminMode = false }: ImageGalleryProps) => {
+export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory = "All" }: ImageGalleryProps) => {
   const [images, setImages] = useState<Image[]>([]);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
 
@@ -25,9 +27,10 @@ export const ImageGallery = ({ onImageClick, adminMode = false }: ImageGalleryPr
       const newImage: Image = {
         id: Date.now().toString(),
         url: imageUrl,
+        category: selectedCategory,
       };
       setImages((prev) => [...prev, newImage]);
-      toast.success("Image added successfully!");
+      toast.success(`Image added to ${selectedCategory} category!`);
     }
   };
 
@@ -41,11 +44,15 @@ export const ImageGallery = ({ onImageClick, adminMode = false }: ImageGalleryPr
     toast.success("Image deleted successfully!");
   };
 
+  const filteredImages = selectedCategory === "All" 
+    ? images 
+    : images.filter(img => img.category === selectedCategory);
+
   return (
     <div className="w-full">
       {/* Image Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-        {images.map((image) => (
+        {filteredImages.map((image) => (
           <motion.div
             key={image.id}
             className="relative group aspect-[1/2]"
