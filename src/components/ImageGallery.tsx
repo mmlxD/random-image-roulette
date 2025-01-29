@@ -59,6 +59,26 @@ export const ImageGallery = ({
     fetchImages();
   }, []);
 
+  const handleImageClick = (image: Image) => {
+    setSelectedImage(image);
+    onImageClick();
+  };
+
+  const handleDeleteImage = async (id: string) => {
+    const { error } = await supabase
+      .from('images')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast.error("Failed to delete image");
+      return;
+    }
+
+    setImages(prev => prev.filter(img => img.id !== id));
+    toast.success("Image deleted successfully!");
+  };
+
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && uploadCategory) {
@@ -113,26 +133,6 @@ export const ImageGallery = ({
         toast.error("An unexpected error occurred");
       }
     }
-  };
-
-  const handleImageClick = (image: Image) => {
-    setSelectedImage(image);
-    onImageClick();
-  };
-
-  const handleDeleteImage = async (id: string) => {
-    const { error } = await supabase
-      .from('images')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      toast.error("Failed to delete image");
-      return;
-    }
-
-    setImages(prev => prev.filter(img => img.id !== id));
-    toast.success("Image deleted successfully!");
   };
 
   const filteredImages = selectedCategory === "All" 
