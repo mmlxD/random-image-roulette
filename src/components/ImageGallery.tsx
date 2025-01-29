@@ -17,10 +17,10 @@ interface ImageGalleryProps {
   categories?: string[];
 }
 
-// Initialize Supabase client with public URL and anon key
+// Initialize Supabase client with your project's URL and anon key
 const supabase = createClient(
-  'https://xyzcompany.supabase.co',  // Replace with your Supabase URL
-  'public-anon-key'  // Replace with your public anon key
+  'https://rlhvxmxigqxhznbvqhct.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJsaHZ4bXhpZ3F4aHpuYnZxaGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY1MzI5ODAsImV4cCI6MjAyMjEwODk4MH0.BEBeQfqQVKkDGHJ5YcXGGbQn54_D5GHNbOZBwkE4fvM'
 );
 
 export const ImageGallery = ({ 
@@ -36,17 +36,23 @@ export const ImageGallery = ({
   // Load images from Supabase on component mount
   useEffect(() => {
     const fetchImages = async () => {
-      const { data, error } = await supabase
-        .from('images')
-        .select('*');
-      
-      if (error) {
-        toast.error("Failed to load images");
-        return;
-      }
+      try {
+        const { data, error } = await supabase
+          .from('images')
+          .select('*');
+        
+        if (error) {
+          console.error('Supabase error:', error);
+          toast.error("Failed to load images");
+          return;
+        }
 
-      if (data) {
-        setImages(data);
+        if (data) {
+          setImages(data);
+        }
+      } catch (error) {
+        console.error('Fetch error:', error);
+        toast.error("Failed to connect to the database");
       }
     };
 
@@ -56,49 +62,56 @@ export const ImageGallery = ({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && uploadCategory) {
-      // First, upload file to Supabase storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(fileName, file);
+      try {
+        // First, upload file to Supabase storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('images')
+          .upload(fileName, file);
 
-      if (uploadError) {
-        toast.error("Failed to upload image");
-        return;
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          toast.error("Failed to upload image");
+          return;
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(fileName);
+
+        // Save image record
+        const { data: imageData, error: imageError } = await supabase
+          .from('images')
+          .insert([
+            {
+              url: publicUrl,
+              category: uploadCategory
+            }
+          ])
+          .select()
+          .single();
+
+        if (imageError) {
+          console.error('Database error:', imageError);
+          toast.error("Failed to save image data");
+          return;
+        }
+
+        const newImage: Image = {
+          id: imageData.id,
+          url: publicUrl,
+          category: uploadCategory,
+        };
+
+        setImages(prev => [...prev, newImage]);
+        toast.success(`Image added to ${uploadCategory} category!`);
+      } catch (error) {
+        console.error('General error:', error);
+        toast.error("An unexpected error occurred");
       }
-
-      // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('images')
-        .getPublicUrl(fileName);
-
-      // Save image record
-      const { data: imageData, error: imageError } = await supabase
-        .from('images')
-        .insert([
-          {
-            url: publicUrl,
-            category: uploadCategory
-          }
-        ])
-        .select()
-        .single();
-
-      if (imageError) {
-        toast.error("Failed to save image data");
-        return;
-      }
-
-      const newImage: Image = {
-        id: imageData.id,
-        url: publicUrl,
-        category: uploadCategory,
-      };
-
-      setImages(prev => [...prev, newImage]);
-      toast.success(`Image added to ${uploadCategory} category!`);
     }
   };
 
