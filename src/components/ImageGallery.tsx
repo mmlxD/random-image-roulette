@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -18,19 +18,32 @@ interface ImageGalleryProps {
 export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory = "All" }: ImageGalleryProps) => {
   const [images, setImages] = useState<Image[]>([]);
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [uploadCategory, setUploadCategory] = useState(selectedCategory);
+
+  // Load images from localStorage on component mount
+  useEffect(() => {
+    const savedImages = localStorage.getItem('gallery-images');
+    if (savedImages) {
+      setImages(JSON.parse(savedImages));
+    }
+  }, []);
+
+  // Save images to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('gallery-images', JSON.stringify(images));
+  }, [images]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // In a real app, you would upload to a server
       const imageUrl = URL.createObjectURL(file);
       const newImage: Image = {
         id: Date.now().toString(),
         url: imageUrl,
-        category: selectedCategory,
+        category: uploadCategory,
       };
       setImages((prev) => [...prev, newImage]);
-      toast.success(`Image added to ${selectedCategory} category!`);
+      toast.success(`Image added to ${uploadCategory} category!`);
     }
   };
 
@@ -50,7 +63,23 @@ export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory
 
   return (
     <div className="w-full">
-      {/* Image Grid */}
+      {adminMode && (
+        <div className="mb-6">
+          <label className="block text-white mb-2">Select Category for Upload</label>
+          <select
+            value={uploadCategory}
+            onChange={(e) => setUploadCategory(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg bg-white/5 border border-pink-500/20 text-white focus:outline-none focus:border-pink-500 mb-4"
+          >
+            {selectedCategory !== "All" ? (
+              <option value={selectedCategory}>{selectedCategory}</option>
+            ) : (
+              <option value="">Select a category</option>
+            )}
+          </select>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
         {filteredImages.map((image) => (
           <motion.div
@@ -76,7 +105,7 @@ export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory
             )}
           </motion.div>
         ))}
-        {adminMode && (
+        {adminMode && uploadCategory && (
           <label className="aspect-[1/2] border-2 border-dashed border-pink-300 rounded-xl flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors bg-pink-50/50">
             <input
               type="file"
@@ -89,7 +118,6 @@ export const ImageGallery = ({ onImageClick, adminMode = false, selectedCategory
         )}
       </div>
 
-      {/* Image Modal */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div

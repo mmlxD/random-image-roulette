@@ -20,14 +20,22 @@ const Index = () => {
     z: 0,
   });
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [categories, setCategories] = useState([
-    "All", "Fashion", "Beauty", "Lifestyle", "Travel",
-    "Fitness", "Dance", "Art", "Music", "Photography",
-    "Nature", "Food", "Pets", "Sports", "Gaming",
-    "Books", "Movies", "DIY", "Crafts", "Technology"
-  ]);
+  const [categories, setCategories] = useState(() => {
+    const savedCategories = localStorage.getItem('gallery-categories');
+    return savedCategories ? JSON.parse(savedCategories) : [
+      "All", "Fashion", "Beauty", "Lifestyle", "Travel",
+      "Fitness", "Dance", "Art", "Music", "Photography",
+      "Nature", "Food", "Pets", "Sports", "Gaming",
+      "Books", "Movies", "DIY", "Crafts", "Technology"
+    ];
+  });
   const [heartClicks, setHeartClicks] = useState(0);
   const [showAdmin, setShowAdmin] = useState(false);
+
+  // Save categories to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('gallery-categories', JSON.stringify(categories));
+  }, [categories]);
 
   const handleHeartClick = () => {
     setHeartClicks(prev => {
@@ -40,9 +48,10 @@ const Index = () => {
     });
   };
 
+  // ... keep existing code (rest of the component)
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-pink-900">
-      {/* Top Bar with Numbers */}
       <div className="fixed top-0 left-0 w-full h-[50px] bg-black/30 backdrop-blur-sm border-b border-pink-500/20 flex items-center justify-between z-50 px-6">
         <div className="flex items-center gap-2">
           <h1 
@@ -113,7 +122,11 @@ const Index = () => {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-7xl mx-auto"
         >
-          <ImageGallery onImageClick={() => {}} adminMode={false} selectedCategory={selectedCategory} />
+          <ImageGallery 
+            onImageClick={() => {}} 
+            adminMode={false} 
+            selectedCategory={selectedCategory} 
+          />
         </motion.div>
       </div>
 

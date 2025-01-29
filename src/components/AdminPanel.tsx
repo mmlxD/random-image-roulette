@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { X, Plus, Trash2, Upload } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { ImageGallery } from "./ImageGallery";
 
@@ -18,10 +18,19 @@ export const AdminPanel = ({ categories, onAddCategory, onRemoveCategory, onClos
   
   const ADMIN_PASSWORD = "FemmyAdmin2024!"; // In a real app, this would be stored securely
 
+  // Check if already authenticated
+  useEffect(() => {
+    const authStatus = localStorage.getItem('admin-auth');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
+      localStorage.setItem('admin-auth', 'true');
       toast.success("Successfully logged in!");
     } else {
       toast.error("Invalid password!");
