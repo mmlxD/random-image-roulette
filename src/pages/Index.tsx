@@ -116,8 +116,8 @@ const Index = () => {
           </button>
         </div>
 
-        {/* Slogan */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none">
+        {/* Slogan - hidden on mobile */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none hidden md:block">
           <motion.h2
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
