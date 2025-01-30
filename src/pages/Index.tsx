@@ -75,24 +75,23 @@ const Index = () => {
               repeatDelay: Math.random() * 5
             }}
           >
-            {/* Randomly select an ornament */}
             {["🌸", "🐻", "🦋", "🌟", "🍀", "🌈", "🎀", "💝", "🌺", "✨"][i % 10]}
           </motion.div>
         ))}
       </div>
 
-      <div className="fixed top-0 left-0 w-full h-[50px] bg-black/30 backdrop-blur-sm border-b border-pink-500/20 flex items-center justify-between z-50 px-6">
+      <div className="fixed top-0 left-0 w-full h-[50px] bg-black/30 backdrop-blur-sm border-b border-pink-500/20 flex items-center justify-between z-50 px-4 md:px-6">
         <div className="flex items-center gap-2">
           <h1 
-            className="font-sans text-2xl md:text-3xl font-bold tracking-wider"
+            className="font-sans text-xl md:text-3xl font-bold tracking-wider"
             style={{
-              background: "linear-gradient(102.3deg, rgba(147,39,143,1) 5.9%, rgba(234,172,232,1) 64%, rgba(246,219,245,1) 89%)",
+              background: "linear-gradient(90deg, #55CDFC 0%, #F7A8B8 50%, #FFFFFF 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text"
             }}
           >
-            femmy roulette
+            FEMMY ROULETTE
           </h1>
           <button 
             onClick={handleHeartClick}
@@ -108,10 +107,9 @@ const Index = () => {
             <svg width="0" height="0">
               <defs>
                 <linearGradient id="trans-gradient" gradientTransform="rotate(90)">
-                  <stop offset="0%" stopColor="#56cbe5" />
-                  <stop offset="33%" stopColor="#b452cd" />
-                  <stop offset="66%" stopColor="#f0913a" />
-                  <stop offset="100%" stopColor="#ffffff" />
+                  <stop offset="0%" stopColor="#55CDFC" />
+                  <stop offset="50%" stopColor="#F7A8B8" />
+                  <stop offset="100%" stopColor="#FFFFFF" />
                 </linearGradient>
               </defs>
             </svg>
@@ -129,20 +127,20 @@ const Index = () => {
           </motion.h2>
         </div>
 
-        <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-2 md:space-x-8">
           {Object.entries(currentValues).map(([key, value]) => (
             <motion.div 
               key={key} 
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-1 md:space-x-2"
               initial={{ scale: 1 }}
               animate={{ 
                 scale: [1, 1.2, 1],
                 transition: { duration: 0.3 }
               }}
             >
-              <span className="text-2xl md:text-3xl font-medium text-pink-300">{key.toUpperCase()}:</span>
+              <span className="text-lg md:text-2xl font-medium text-pink-300">{key.toUpperCase()}:</span>
               <motion.span 
-                className="text-3xl md:text-4xl font-bold text-white"
+                className="text-xl md:text-3xl font-bold text-white"
                 key={value}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ 
@@ -162,7 +160,7 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="pt-[70px] pb-6 px-6">
+      <div className="pt-[70px] pb-6 px-4 md:px-6">
         <div className="flex items-center gap-2 mb-4">
           <Tag className="w-5 h-5 text-pink-400" />
           <h2 className="text-xl font-semibold text-white">Categories</h2>
@@ -185,7 +183,7 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="container mx-auto pb-12">
+      <div className="container mx-auto pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -198,6 +196,13 @@ const Index = () => {
             categories={categories}
           />
         </motion.div>
+      </div>
+
+      {/* Footer */}
+      <div className="fixed bottom-0 left-0 w-full bg-black/30 backdrop-blur-sm border-t border-pink-500/20 py-3 px-4 text-center">
+        <p className="text-white/70 text-sm">
+          © 2025 <a href="https://femmy.me" className="hover:text-pink-300 transition-colors">Sonya/femmy.me</a>. Все права защищены.
+        </p>
       </div>
 
       <AnimatePresence>
