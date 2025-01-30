@@ -68,14 +68,25 @@ const Index = () => {
           </h1>
           <button 
             onClick={handleHeartClick}
-            className="text-transparent hover:scale-110 transition-transform"
-            style={{
-              background: "linear-gradient(45deg, #FF0018, #FFA52C, #FFFF41, #008018, #0000F9, #86007D)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text"
-            }}
+            className="transition-transform hover:scale-110"
           >
-            <Heart className="w-5 h-5 fill-current" />
+            <Heart 
+              className="w-5 h-5" 
+              style={{
+                fill: "url(#trans-gradient)",
+                stroke: "none"
+              }}
+            />
+            <svg width="0" height="0">
+              <defs>
+                <linearGradient id="trans-gradient" gradientTransform="rotate(90)">
+                  <stop offset="0%" stopColor="#56cbe5" />
+                  <stop offset="33%" stopColor="#b452cd" />
+                  <stop offset="66%" stopColor="#f0913a" />
+                  <stop offset="100%" stopColor="#ffffff" />
+                </linearGradient>
+              </defs>
+            </svg>
           </button>
         </div>
         <div className="flex items-center space-x-8">
@@ -83,17 +94,34 @@ const Index = () => {
             <motion.div 
               key={key} 
               className="flex items-center space-x-2"
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 0.3 }}
+              initial={{ scale: 1 }}
+              animate={{ 
+                scale: [1, 1.2, 1],
+                transition: { duration: 0.3 }
+              }}
             >
               <span className="text-2xl md:text-3xl font-medium text-pink-300">{key.toUpperCase()}:</span>
-              <span className="text-3xl md:text-4xl font-bold text-white">{value}</span>
+              <motion.span 
+                className="text-3xl md:text-4xl font-bold text-white"
+                key={value}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ 
+                  opacity: 1, 
+                  y: 0,
+                  transition: { 
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 10
+                  }
+                }}
+              >
+                {value}
+              </motion.span>
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Categories Section */}
       <div className="pt-[70px] pb-6 px-6">
         <div className="flex items-center gap-2 mb-4">
           <Tag className="w-5 h-5 text-pink-400" />
