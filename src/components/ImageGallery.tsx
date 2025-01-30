@@ -11,13 +11,12 @@ interface Image {
 }
 
 interface ImageGalleryProps {
-  onImageClick: () => void;
+  onImageClick: (values: { w: number; x: number; y: number; z: number }) => void;
   adminMode?: boolean;
   selectedCategory?: string;
   categories?: string[];
 }
 
-// Initialize Supabase client with your project's URL and anon key
 const supabase = createClient(
   'https://wpaqlxtzoymvsbtdshep.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwYXFseHR6b3ltdnNidGRzaGVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxNDc2NTcsImV4cCI6MjA1MzcyMzY1N30.rlyPWYg9s5IsnS2DpD-P2xA9TxzO1RTSljfI5m8VUN8'
@@ -33,7 +32,6 @@ export const ImageGallery = ({
   const [selectedImage, setSelectedImage] = useState<Image | null>(null);
   const [uploadCategory, setUploadCategory] = useState(selectedCategory);
 
-  // Load images from Supabase on component mount
   useEffect(() => {
     const fetchImages = async () => {
       try {
@@ -59,9 +57,19 @@ export const ImageGallery = ({
     fetchImages();
   }, []);
 
+  const generateRandomNumbers = () => {
+    return {
+      w: Math.floor(Math.random() * 10) + 1,
+      x: Math.floor(Math.random() * 10) + 1,
+      y: Math.floor(Math.random() * 10) + 1,
+      z: Math.floor(Math.random() * 10) + 1
+    };
+  };
+
   const handleImageClick = (image: Image) => {
     setSelectedImage(image);
-    onImageClick();
+    const randomNumbers = generateRandomNumbers();
+    onImageClick(randomNumbers);
   };
 
   const handleDeleteImage = async (id: string) => {

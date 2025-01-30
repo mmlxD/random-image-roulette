@@ -32,7 +32,6 @@ const Index = () => {
   const [heartClicks, setHeartClicks] = useState(0);
   const [showAdmin, setShowAdmin] = useState(false);
 
-  // Save categories to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('gallery-categories', JSON.stringify(categories));
   }, [categories]);
@@ -48,7 +47,9 @@ const Index = () => {
     });
   };
 
-  // ... keep existing code (rest of the component)
+  const handleImageClick = (values: Values) => {
+    setCurrentValues(values);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-900 to-pink-900">
@@ -123,14 +124,14 @@ const Index = () => {
           className="max-w-7xl mx-auto"
         >
           <ImageGallery 
-            onImageClick={() => {}} 
-            adminMode={false} 
-            selectedCategory={selectedCategory} 
+            onImageClick={handleImageClick} 
+            adminMode={showAdmin} 
+            selectedCategory={selectedCategory}
+            categories={categories}
           />
         </motion.div>
       </div>
 
-      {/* Admin Panel */}
       <AnimatePresence>
         {showAdmin && (
           <AdminPanel 
