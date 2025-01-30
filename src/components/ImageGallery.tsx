@@ -205,36 +205,39 @@ export const ImageGallery = ({
       </div>
 
       <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-40"
-            onClick={() => setSelectedImage(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-              className="relative max-w-4xl max-h-[calc(100vh-70px)] mx-4"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={selectedImage.url}
-                alt="Selected"
-                className="w-full h-full object-contain rounded-xl"
-              />
-              <button
+
+            {selectedImage && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/80 flex items-center justify-center z-40"
                 onClick={() => setSelectedImage(null)}
-                className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-full"
               >
-                <X className="w-6 h-6 text-white" />
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
+                <motion.div
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0.9 }}
+                  className="relative max-w-2xl max-h-[80vh] mx-4" // Changed from max-w-4xl to max-w-2xl and added max-height
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <img
+                    src={selectedImage.url}
+                    alt="Selected"
+                    className="w-full h-full object-contain rounded-xl"
+                  />
+                  <button
+                    onClick={() => setSelectedImage(null)}
+                    className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-full"
+                  >
+                    <X className="w-6 h-6 text-white" />
+                  </button>
+                </motion.div>
+              </motion.div>
+            )}
+
       </AnimatePresence>
     </div>
   );
 };
+

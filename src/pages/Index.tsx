@@ -52,7 +52,35 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-900 to-pink-900">
+    <div className="min-h-screen bg-gradient-to-b from-purple-900 to-pink-900 relative overflow-hidden">
+      {/* Background Ornaments */}
+      <div className="fixed inset-0 pointer-events-none">
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ 
+              opacity: 0.2, 
+              scale: 1,
+              x: Math.random() * window.innerWidth,
+              y: Math.random() * window.innerHeight,
+              rotate: Math.random() * 360
+            }}
+            transition={{
+              duration: 0.5,
+              delay: i * 0.1,
+              repeat: Infinity,
+              repeatType: "reverse",
+              repeatDelay: Math.random() * 5
+            }}
+          >
+            {/* Randomly select an ornament */}
+            {["🌸", "🐻", "🦋", "🌟", "🍀", "🌈", "🎀", "💝", "🌺", "✨"][i % 10]}
+          </motion.div>
+        ))}
+      </div>
+
       <div className="fixed top-0 left-0 w-full h-[50px] bg-black/30 backdrop-blur-sm border-b border-pink-500/20 flex items-center justify-between z-50 px-6">
         <div className="flex items-center gap-2">
           <h1 
@@ -89,6 +117,18 @@ const Index = () => {
             </svg>
           </button>
         </div>
+
+        {/* Slogan */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 pointer-events-none">
+          <motion.h2
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-lg font-dancing text-white/80"
+          >
+            Make love not war
+          </motion.h2>
+        </div>
+
         <div className="flex items-center space-x-8">
           {Object.entries(currentValues).map(([key, value]) => (
             <motion.div 
